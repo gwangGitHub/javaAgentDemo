@@ -17,7 +17,7 @@ public class AopAgentTransformer implements ClassFileTransformer {
                             Class<?> classBeingRedefined, ProtectionDomain protectionDomain,
                             byte[] classfileBuffer) throws IllegalClassFormatException {
         byte[] transformed = null;
-//        System.out.println("Transforming " + className);
+        System.out.println("Transforming " + className);
         ClassPool pool;
         CtClass cl = null;
         if ("Account".equals(className)) {
