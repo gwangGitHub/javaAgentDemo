@@ -13,8 +13,13 @@ import java.security.ProtectionDomain;
  */
 public class AgentJavassistTransformer implements ClassFileTransformer {
 
-    private static final String TRANS_CLASS_NAME = "Account";
-    private static final String TRANS_METHOD_NAME = "operation";
+    private String transClass;
+    private String transMethod;
+
+    public AgentJavassistTransformer(String transClass, String transMethod) {
+        this.transClass = transClass;
+        this.transMethod= transMethod;
+    }
 
     public byte[] transform(ClassLoader loader, String className,
                             Class<?> classBeingRedefined, ProtectionDomain protectionDomain,
@@ -23,7 +28,7 @@ public class AgentJavassistTransformer implements ClassFileTransformer {
         System.out.println("AgentJavassistTransformer Transform " + className);
         ClassPool pool;
         CtClass cl = null;
-        if (className.contains(TRANS_CLASS_NAME)) {
+        if (className.contains(transClass)) {
             System.out.println("Create Class " + className);
             try {
                 pool = ClassPool.getDefault();
@@ -58,7 +63,7 @@ public class AgentJavassistTransformer implements ClassFileTransformer {
     }
 
     private boolean isMethodNeedTrans(CtMethod method) {
-        if (method.getName().contains(TRANS_METHOD_NAME)) {
+        if (method.getName().contains(transMethod)) {
             return true;
         }
         return false;

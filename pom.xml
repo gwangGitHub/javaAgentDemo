@@ -24,6 +24,18 @@
             <version>3.12.1.GA</version>
         </dependency>
 
+        <dependency>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy</artifactId>
+            <version>1.5.7</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy-agent</artifactId>
+            <version>1.5.7</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -70,17 +82,38 @@
                                 true
                             </Can-Retransform-Classes>
                             <Premain-Class>
-                                com.gwang.hotSwap.instrument.premain.AopAgentDemo
+                                com.gwang.hotSwap.instrument.premain.PremainDemo
                             </Premain-Class>
-                            <Agent-Class>
-                                com.gwang.hotSwap.instrument.agentmain.AgentMainDemo
-                            </Agent-Class>
+                            <!--<Agent-Class>-->
+                                <!--com.gwang.hotSwap.instrument.agentmain.AgentMainDemo-->
+                            <!--</Agent-Class>-->
                         </manifestEntries>
                     </archive>
                     <!--过滤掉不希望包含在jar中的文件 -->
                     <excludes>
                         <exclude>${project.basedir}/xml/*</exclude>
                     </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <artifactSet>
+                        <includes>
+                            <include>javassist:javassist:jar:</include>
+                            <include>net.bytebuddy:byte-buddy:jar:</include>
+                            <include>net.bytebuddy:byte-buddy-agent:jar:</include>
+                        </includes>
+                    </artifactSet>
                 </configuration>
             </plugin>
         </plugins>
