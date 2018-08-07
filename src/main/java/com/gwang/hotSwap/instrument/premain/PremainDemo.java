@@ -6,7 +6,7 @@ import java.lang.instrument.Instrumentation;
 /**
  * Created by wanggang on 2018/7/23.
  */
-public class AopAgentDemo {
+public class PremainDemo {
     static private Instrumentation instrument = null;
     /**
      * The agent class must implement a public static premain method similar in principle to the main application entry point.
@@ -21,9 +21,13 @@ public class AopAgentDemo {
         instrument = inst;
 
         /* ClassFileTransformer : An agent provides an implementation of this interface in order to transform class files.*/
-        ClassFileTransformer trans = new AopAgentTransformer();
 
-        System.out.println("Adding a AopAgentTest instance to the JVM.");
+        //example1:origin transformer
+//        ClassFileTransformer trans = new AgentOriginTransformer();
+        //example2:javassist transformer
+        ClassFileTransformer trans = new AgentJavassistTransformer();
+
+        System.out.println("Adding a javaagent premain instance to the JVM.");
 
         /*Registers the supplied transformer.*/
         instrument.addTransformer(trans);

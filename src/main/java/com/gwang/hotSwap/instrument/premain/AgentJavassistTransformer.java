@@ -11,16 +11,19 @@ import java.security.ProtectionDomain;
 /**
  * Created by wanggang on 2018/7/23.
  */
-public class AopAgentTransformer implements ClassFileTransformer {
+public class AgentJavassistTransformer implements ClassFileTransformer {
+
+    private static final String TRANS_CLASS_NAME = "Account";
+    private static final String TRANS_METHOD_NAME = "operation";
 
     public byte[] transform(ClassLoader loader, String className,
                             Class<?> classBeingRedefined, ProtectionDomain protectionDomain,
                             byte[] classfileBuffer) throws IllegalClassFormatException {
         byte[] transformed = null;
-        System.out.println("Transforming " + className);
+        System.out.println("AgentJavassistTransformer Transform " + className);
         ClassPool pool;
         CtClass cl = null;
-        if ("Account".equals(className)) {
+        if (className.contains(TRANS_CLASS_NAME)) {
             System.out.println("Create Class " + className);
             try {
                 pool = ClassPool.getDefault();
@@ -35,10 +38,9 @@ public class AopAgentTransformer implements ClassFileTransformer {
                 if (cl.isInterface() == false) {
                     CtMethod[] methods = cl.getDeclaredMethods();
                     for (int i = 0; i < methods.length; i++) {
-                        System.out.println("Method: " + methods[i].getName());
-                        if (methods[i].isEmpty() == false) {
-                            System.out.println("Method not empty: " + methods[i].getName());
-                            AOPInsertMethod(methods[i]);
+                        if (methods[i].isEmpty() == false && isMethodNeedTrans(methods[i])) {
+//                            AOPInsertMethodV1(methods[i]);
+                            AOPInsertMethodV2(methods[i]);
                         }
                     }
                     transformed = cl.toBytecode();
@@ -55,7 +57,15 @@ public class AopAgentTransformer implements ClassFileTransformer {
         return transformed;
     }
 
-    private void AOPInsertMethod(CtMethod method) throws NotFoundException,CannotCompileException {
+    private boolean isMethodNeedTrans(CtMethod method) {
+        if (method.getName().contains(TRANS_METHOD_NAME)) {
+            return true;
+        }
+        return false;
+    }
+
+    private void AOPInsertMethodV1(CtMethod method) throws NotFoundException,CannotCompileException {
+        System.out.println("AOPInsertMethodV1 trans Method: " + method.getName());
         //situation 1:添加监控时间
         method.instrument(new ExprEditor() {
             public void edit(MethodCall m) throws CannotCompileException {
@@ -65,8 +75,12 @@ public class AopAgentTransformer implements ClassFileTransformer {
                         + " cost:\" + (System.currentTimeMillis() - stime) + \" ms\");}");
             }
         });
+    }
+
+    private void AOPInsertMethodV2(CtMethod method) throws NotFoundException,CannotCompileException{
+        System.out.println("AOPInsertMethodV2 trans Method: " + method.getName());
         //situation 2:在方法体前后语句
-      method.insertBefore("System.out.println(\"enter method\");");
-      method.insertAfter("System.out.println(\"leave method\");");
+        method.insertBefore("System.out.println(\"enter method\");");
+        method.insertAfter("System.out.println(\"leave method\");");
     }
 }
