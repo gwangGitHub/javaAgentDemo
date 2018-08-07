@@ -1,11 +1,13 @@
 package com.gwang.hotSwap.instrument.premain;
 
+import com.gwang.hotSwap.instrument.byteBuddy.intercepter.TimeAnnotationInterceptor;
 import com.gwang.hotSwap.instrument.byteBuddy.intercepter.TimeInterceptor;
 import net.bytebuddy.agent.builder.AgentBuilder;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.dynamic.DynamicType;
 import net.bytebuddy.implementation.MethodDelegation;
 
+import static net.bytebuddy.matcher.ElementMatchers.any;
 import static net.bytebuddy.matcher.ElementMatchers.named;
 
 /**
@@ -31,7 +33,27 @@ public class AgentByteBuddyTransformer implements AgentBuilder.Transformer {
     @Override
     public DynamicType.Builder<?> transform(DynamicType.Builder<?> builder, TypeDescription typeDescription, ClassLoader classLoader) {
         System.out.println("AgentByteBuddyTransformer transform method called");
+//        return transByName(builder);
+        return transByAnnotation(builder);
+    }
+
+    /**
+     * trans method by name
+     * @param builder
+     * @return
+     */
+    private DynamicType.Builder<?> transByName(DynamicType.Builder<?> builder) {
         return builder.method(named(transMethod))
                 .intercept(MethodDelegation.to(TimeInterceptor.class));
+    }
+
+    /**
+     * trans method by annotation on method
+     * @param builder
+     * @return
+     */
+    private DynamicType.Builder<?> transByAnnotation(DynamicType.Builder<?> builder) {
+        return builder.method(any())
+                .intercept(MethodDelegation.to(TimeAnnotationInterceptor.class));
     }
 }
