@@ -1,19 +1,25 @@
 package com.gwang.hotSwap.classLoader;
 
 /**
- * Created by wanggang on 2018/8/4.
+ * Created by wanggang on 2018/8/6.
  */
 public class Account {
-    public void operation() {
-        System.out.println("operation...");
+    public String operation(int a) {
+        String result = "operation..." + a;
+        System.out.println(result);
         try {
-            Thread.sleep(10);
+            Thread.sleep(5000);
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return result;
     }
 
     public static void main(String[] args) {
-        new Account().operation();
+        int a = 0;
+        while (true) {
+            a++;
+            new Account().operation(a);
+        }
     }
 }

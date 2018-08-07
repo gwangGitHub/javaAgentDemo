@@ -5,6 +5,6 @@ package com.gwang.hotSwap.classLoader;
  */
 public class ReCompileAccount {
     public static void main(String[] args) {
-        new Account().operation();
+        new Account().operation(0);
     }
 }
