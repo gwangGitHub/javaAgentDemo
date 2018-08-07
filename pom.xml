@@ -84,9 +84,9 @@
                             <Premain-Class>
                                 com.gwang.hotSwap.instrument.premain.PremainDemo
                             </Premain-Class>
-                            <!--<Agent-Class>-->
-                                <!--com.gwang.hotSwap.instrument.agentmain.AgentMainDemo-->
-                            <!--</Agent-Class>-->
+                            <Agent-Class>
+                                com.gwang.hotSwap.instrument.agentmain.AgentMainDemo
+                            </Agent-Class>
                         </manifestEntries>
                     </archive>
                     <!--过滤掉不希望包含在jar中的文件 -->
